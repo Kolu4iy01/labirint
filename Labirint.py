@@ -5,10 +5,6 @@ import os
 
 
 class Main:
-    # road =0
-    # wall = 1
-    # start = 2
-    # finish = 3
 
     matrix = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
               [2, 0, 0, 3, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -27,13 +23,16 @@ class Main:
               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
               [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 3, 1],
               [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]]
-    start_pos = {'x': 1, 'y': 0}
-    real_pos = {'x': 1, 'y': 0}
-    end_pos = {}
+    # дорога = 0, стена = 1, старт = 2, финиш = 3
+    start_pos = {'x': 1, 'y': 0}    #стартовая позиция
+    real_pos = {'x': 1, 'y': 0}     #реальная позиция
+    end_pos = {}                    #предыдушая позиция
 
     def __init__(self):
         self.load_flag = False
+        #проверка на наличие сохранения
         if self.load_game() != self.load_flag:
+            #если имеется сохраненная и предлогаем загрузить
             self.do_you_load_game()
         self.flag_game = True
         print('Ваш ход =>')
@@ -49,6 +48,7 @@ class Main:
             os.remove('end_pos.json')
             self.real_pos = self.start_pos
 
+    # значение позиции в матрице
     def position(self, a):
         if a == 0:
             print('\nШарик нашел правильный путь!\nСделайте следующий ход.')
@@ -65,6 +65,7 @@ class Main:
             self.real_pos = self.start_pos
             self.new_game()
 
+    # сохранение игры
     def save_game(self):
         print('Сохранить прогресс?')
         s = input('Нажмите "y" для сохранения или "n" для отмены: ')
@@ -77,6 +78,7 @@ class Main:
             self.flag_game = False
             self.new_game()
 
+    #загрузка игры
     def load_game(self):
         try:
             with open('end_pos.json') as load_save:
@@ -89,7 +91,8 @@ class Main:
         print('Начать игру заново?')
         restart = input('Нажмите "y" чтобы вернуться к предыдушему ходу,"r" чтобы начать заново или "n" для выхода:')
         if restart == 'y':
-            self.load_game()
+            self.real_pos = self.end_pos
+            self.flag_game = True
         elif restart == 'r':
             self.real_pos = self.start_pos
             self.flag_game = True
@@ -98,6 +101,7 @@ class Main:
             self.flag_game = False
         pass
 
+    #распознование нажатия клавиш
     def press(self, event):
         self.end_pos = copy.copy(self.real_pos)
         if self.flag_game is False:
